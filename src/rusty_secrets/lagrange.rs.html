@@ -186,10 +186,10 @@
                 <span class="kw">let</span> <span class="ident">xj</span> <span class="op">=</span> <span class="ident">Gf256</span>::<span class="ident">from_byte</span>(<span class="ident">raw_xj</span>);
                 <span class="kw">let</span> <span class="ident">delta</span> <span class="op">=</span> <span class="ident">xi</span> <span class="op">-</span> <span class="ident">xj</span>;
                 <span class="macro">assert_ne</span><span class="macro">!</span>(<span class="ident">delta</span>.<span class="ident">poly</span>, <span class="number">0</span>, <span class="string">&quot;Duplicate shares&quot;</span>);
-                <span class="ident">prod</span> <span class="op">=</span> <span class="ident">prod</span> <span class="op">*</span> <span class="ident">xj</span> <span class="op">/</span> <span class="ident">delta</span>;
+                <span class="ident">prod</span> <span class="op">*=</span> <span class="ident">xj</span> <span class="op">/</span> <span class="ident">delta</span>;
             }
         }
-        <span class="ident">sum</span> <span class="op">=</span> <span class="ident">sum</span> <span class="op">+</span> <span class="ident">prod</span> <span class="op">*</span> <span class="ident">yi</span>;
+        <span class="ident">sum</span> <span class="op">+=</span> <span class="ident">prod</span> <span class="op">*</span> <span class="ident">yi</span>;
     }
     <span class="ident">sum</span>.<span class="ident">to_byte</span>()
 }
@@ -208,7 +208,7 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">prod</span> <span class="op">=</span> <span class="ident">Gf256</span>::<span class="ident">one</span>();
         <span class="kw">for</span> <span class="kw-2">&amp;</span>(<span class="ident">x1</span>, _) <span class="kw">in</span> <span class="ident">points</span> {
             <span class="kw">if</span> <span class="ident">x</span> <span class="op">!=</span> <span class="ident">x1</span> {
-                <span class="ident">prod</span> <span class="op">=</span> <span class="ident">prod</span> <span class="op">*</span> (<span class="ident">x</span> <span class="op">-</span> <span class="ident">x1</span>);
+                <span class="ident">prod</span> <span class="op">*=</span> <span class="ident">x</span> <span class="op">-</span> <span class="ident">x1</span>;
 
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">prec</span> <span class="op">=</span> <span class="ident">Gf256</span>::<span class="ident">zero</span>();
                 <span class="ident">coeffs</span> <span class="op">=</span> <span class="ident">coeffs</span>
