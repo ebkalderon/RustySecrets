@@ -26,10 +26,8 @@ mod vol_hash;
 pub mod errors;
 pub mod sss;
 pub mod wrapped_secrets;
-pub mod proto;
-
-#[cfg(feature = "dss")]
 pub mod dss;
+pub mod proto;
 
 #[cfg(test)]
 extern crate itertools;
