@@ -10,7 +10,6 @@ use dss::random::{random_bytes, random_bytes_count, MAX_MESSAGE_SIZE};
 use share::validation::{validate_share_count, validate_shares};
 use lagrange;
 
-use super::AccessStructure;
 use super::share::*;
 use super::encode::encode_secret;
 
@@ -85,10 +84,7 @@ impl ThSS {
     }
 
     /// Recover the secret from the given set of shares
-    pub fn recover_secret(
-        &self,
-        shares: &[Share],
-    ) -> Result<(Vec<u8>, AccessStructure, Option<MetaData>)> {
+    pub fn recover_secret(&self, shares: &[Share]) -> Result<(Vec<u8>, Option<MetaData>)> {
         let (threshold, shares) = validate_shares(shares.to_vec())?;
 
         let cypher_len = shares[0].data.len();
@@ -124,11 +120,6 @@ impl ThSS {
             .map(|p| p.evaluate_at_zero().to_byte())
             .collect();
 
-        let access_structure = AccessStructure {
-            threshold: threshold,
-            shares_count: shares.first().unwrap().shares_count,
-        };
-
-        Ok((secret, access_structure, metadata))
+        Ok((secret, metadata))
     }
 }

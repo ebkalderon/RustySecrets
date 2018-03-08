@@ -6,8 +6,7 @@ use ring::digest::{Context, SHA256};
 use rand::{ChaChaRng, Rng, SeedableRng};
 
 use errors::*;
-use dss::{thss, AccessStructure};
-use dss::thss::{MetaData, ThSS};
+use dss::thss::{self, MetaData, ThSS};
 use dss::random::{random_bytes_count, FixedRandom, MAX_MESSAGE_SIZE};
 use share::validation::{validate_share_count, validate_shares};
 use super::share::*;
@@ -243,10 +242,7 @@ impl SS1 {
     }
 
     /// Recover the secret from the given set of shares
-    pub fn recover_secret(
-        &self,
-        shares: &[Share],
-    ) -> Result<(Vec<u8>, AccessStructure, Option<MetaData>)> {
+    pub fn recover_secret(&self, shares: &[Share]) -> Result<(Vec<u8>, Option<MetaData>)> {
         let (_, shares) = validate_shares(shares.to_vec())?;
 
         let underlying_shares = shares
@@ -261,7 +257,7 @@ impl SS1 {
             .collect::<Vec<_>>();
 
         let underlying = ThSS::default();
-        let (mut secret, _, metadata) = underlying.recover_secret(&underlying_shares)?;
+        let (mut secret, metadata) = underlying.recover_secret(&underlying_shares)?;
         let secret_len = secret.len() - self.random_padding_len;
         let random_padding = secret.split_off(secret_len);
         // `secret` nows holds the secret
@@ -276,17 +272,9 @@ impl SS1 {
             &metadata,
         )?;
 
-        let access_structure = {
-            let first_share = shares.first().unwrap();
-            AccessStructure {
-                threshold: first_share.threshold,
-                shares_count: first_share.shares_count,
-            }
-        };
-
         self.verify_test_shares(shares, test_shares)?;
 
-        Ok((secret, access_structure, metadata))
+        Ok((secret, metadata))
     }
 
     fn verify_test_shares(
